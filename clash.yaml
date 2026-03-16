@@ -1,0 +1,35 @@
+mixed-port: 7890
+mode: rule
+log-level: info
+
+proxies:
+  - name: Tokyo-Reality
+    type: vless
+    server: 108.160.142.78
+    port: 35222
+    uuid: e2cffb3a-2325-4ca1-9065-3e1ce2a6b729
+    network: tcp
+    tls: true
+    udp: true
+    flow: xtls-rprx-vision
+    servername: software.download.prss.microsoft.com
+    client-fingerprint: chrome
+    reality-opts:
+      public-key: NyqpsdgtVsbRMZyZBAjHDDBvkeY-l5vtrNRxj9hUOx0
+      short-id: 6ba85179e30d4fc2
+
+proxy-groups:
+  - name: Proxy
+    type: select
+    proxies:
+      - Tokyo-Reality
+      - DIRECT
+
+rules:
+  - DOMAIN-SUFFIX,openai.com,Proxy
+  - DOMAIN-SUFFIX,claude.ai,Proxy
+  - DOMAIN-SUFFIX,anthropic.com,Proxy
+  - DOMAIN-SUFFIX,youtube.com,Proxy
+  - DOMAIN-SUFFIX,googlevideo.com,Proxy
+  - GEOIP,CN,DIRECT
+  - MATCH,Proxy
