@@ -3,7 +3,7 @@ mode: rule
 log-level: info
 
 proxies:
-  - name: Tokyo-Reality
+  - name: Tokyo
     type: vless
     server: 108.160.142.78
     port: 35222
@@ -33,7 +33,7 @@ proxies:
       public-key: 66j5-hoiAnJYmD24btff-VoJ-Dp4nEk_DTCFPH9l9iI
       short-id: 6ba85179e30d4fc2    
 
-  - name: osaka
+  - name: Osaka
     type: vless
     server: 64.176.51.38
     port: 26273
@@ -48,7 +48,7 @@ proxies:
       public-key: PVAWptRBr2fYsMhlkHkGgip_5xGntn4QklGmeBTn4S0
       short-id: 6ba85179e30d4fc2 
 
-  - name: singapore
+  - name: Singapore
     type: vless
     server: 64.176.83.204
     port: 37603
@@ -100,6 +100,7 @@ proxy-groups:
       - Singapore
       - LA
       - DIRECT
+      
 rules:
   # ===== AI =====
   - DOMAIN-SUFFIX,openai.com,Proxy
