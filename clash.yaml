@@ -18,27 +18,30 @@ proxies:
       public-key: NyqpsdgtVsbRMZyZBAjHDDBvkeY-l5vtrNRxj9hUOx0
       short-id: 6ba85179e30d4fc2
       
- - name: Seoul
-  type: vless
-  server: 158.247.195.13
-  port: 25403
-  uuid: 18f80693-f280-4fa1-8a0b-13af0289d244
-  network: tcp
-  tls: true
-  udp: true
-  flow: xtls-rprx-vision
-  servername: osxapps.itunes.apple.com
-  reality-opts:
+  - name: Seoul
+    type: vless
+    server: 158.247.195.13
+    port: 25403
+    uuid: 18f80693-f280-4fa1-8a0b-13af0289d244
+    network: tcp
+    tls: true
+    udp: true
+    flow: xtls-rprx-vision
+    servername: osxapps.itunes.apple.com
+    reality-opts:
     public-key: 66j5-hoiAnJYmD24btff-VoJ-Dp4nEk_DTCFPH9l9iI
     short-id: 6ba85179e30d4fc2
-  client-fingerprint: chrome
+    client-fingerprint: chrome
 
 proxy-groups:
   - name: Auto
     type: url-test
     proxies:
       - Tokyo
+      - Osaka
       - Seoul
+      - Singapore
+      - LA
     url: http://www.gstatic.com/generate_204
     interval: 300
 
@@ -47,7 +50,10 @@ proxy-groups:
     proxies:
       - Auto
       - Tokyo
+      - Osaka
       - Seoul
+      - Singapore
+      - LA
       - DIRECT
 
 rules:
