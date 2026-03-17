@@ -33,6 +33,21 @@ proxies:
     short-id: 6ba85179e30d4fc2
     client-fingerprint: chrome
 
+  - name: osaka
+    type: vless
+    server: 64.176.51.38
+    port: 26273
+    uuid: 681e16bd-ca8f-459f-8f7e-c812fe202e34
+    network: tcp
+    tls: true
+    udp: true
+    flow: xtls-rprx-vision
+    servername: lol.secure.dyn.riotcdn.net
+    reality-opts:
+    public-key: PVAWptRBr2fYsMhlkHkGgip_5xGntn4QklGmeBTn4S0
+    short-id: 6ba85179e30d4fc2
+    client-fingerprint: chrome
+
 proxy-groups:
   - name: Auto
     type: url-test
