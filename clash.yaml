@@ -38,10 +38,7 @@ proxy-groups:
     type: url-test
     proxies:
       - Tokyo
-      - Osaka
       - Seoul
-      - Singapore
-      - LA
     url: http://www.gstatic.com/generate_204
     interval: 300
 
@@ -50,10 +47,7 @@ proxy-groups:
     proxies:
       - Auto
       - Tokyo
-      - Osaka
       - Seoul
-      - Singapore
-      - LA
       - DIRECT
 
 rules:
