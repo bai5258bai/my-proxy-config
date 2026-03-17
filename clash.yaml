@@ -48,6 +48,21 @@ proxies:
     short-id: 6ba85179e30d4fc2
     client-fingerprint: chrome
 
+  - name: singapore
+    type: vless
+    server: 64.176.83.204
+    port: 37603
+    uuid: 86f3bb0d-0d00-4db1-af36-d9d8ce7b00d9
+    network: tcp
+    tls: true
+    udp: true
+    flow: xtls-rprx-vision
+    servername: itunes.apple.com
+    reality-opts:
+    public-key: fN55GToH2lUYAx8ng20ojLIX-qHPhdwM7DQQKQgIZn0
+    short-id: 6ba85179e30d4fc2
+    client-fingerprint: chrome
+
 proxy-groups:
   - name: Auto
     type: url-test
