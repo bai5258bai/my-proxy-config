@@ -28,10 +28,10 @@ proxies:
     udp: true
     flow: xtls-rprx-vision
     servername: osxapps.itunes.apple.com
-    reality-opts:
-    public-key: 66j5-hoiAnJYmD24btff-VoJ-Dp4nEk_DTCFPH9l9iI
-    short-id: 6ba85179e30d4fc2
     client-fingerprint: chrome
+    reality-opts:
+      public-key: 66j5-hoiAnJYmD24btff-VoJ-Dp4nEk_DTCFPH9l9iI
+      short-id: 6ba85179e30d4fc2    
 
   - name: osaka
     type: vless
@@ -43,10 +43,10 @@ proxies:
     udp: true
     flow: xtls-rprx-vision
     servername: lol.secure.dyn.riotcdn.net
-    reality-opts:
-    public-key: PVAWptRBr2fYsMhlkHkGgip_5xGntn4QklGmeBTn4S0
-    short-id: 6ba85179e30d4fc2
     client-fingerprint: chrome
+    reality-opts:
+      public-key: PVAWptRBr2fYsMhlkHkGgip_5xGntn4QklGmeBTn4S0
+      short-id: 6ba85179e30d4fc2 
 
   - name: singapore
     type: vless
@@ -58,10 +58,10 @@ proxies:
     udp: true
     flow: xtls-rprx-vision
     servername: itunes.apple.com
-    reality-opts:
-    public-key: fN55GToH2lUYAx8ng20ojLIX-qHPhdwM7DQQKQgIZn0
-    short-id: 6ba85179e30d4fc2
     client-fingerprint: chrome
+    reality-opts:
+      public-key: fN55GToH2lUYAx8ng20ojLIX-qHPhdwM7DQQKQgIZn0
+      short-id: 6ba85179e30d4fc2    
 
   - name: LA
     type: vless
@@ -73,10 +73,10 @@ proxies:
     udp: true
     flow: xtls-rprx-vision
     servername: lol.secure.dyn.riotcdn.net
-    reality-opts:
-    public-key: olvsja0ArzSGY9emnWAhNpw5BiGkmZJMFHymCQIAr0k
-    short-id: 6ba85179e30d4fc2
     client-fingerprint: chrome
+    reality-opts:
+      public-key: olvsja0ArzSGY9emnWAhNpw5BiGkmZJMFHymCQIAr0k
+      short-id: 6ba85179e30d4fc2   
 
 proxy-groups:
   - name: Auto
