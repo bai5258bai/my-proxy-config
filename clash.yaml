@@ -22,7 +22,7 @@ proxies:
     type: vless
     server: 158.247.195.13
     port: 25403
-    uuid: 18f80693-f280-4fa1-8a0b-13af0289d244
+    uuid: eceaa5f5-e244-4445-95d0-6f66379a4faa
     network: tcp
     tls: true
     udp: true
