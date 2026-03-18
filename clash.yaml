@@ -1,23 +1,42 @@
+# ==========================================================
+# 基础设置 & TUN 模式优化
+# ==========================================================
 mixed-port: 7890
+allow-lan: true
 mode: rule
 log-level: info
+ipv6: false
+external-controller: 127.0.0.1:9090
 
+# TUN 模式配置：接管整机流量且不影响国内网速
+tun:
+  enable: true
+  stack: system
+  auto-route: true
+  auto-detect-interface: true
+  dns-hierarchical: true
+
+# DNS 优化：国内用阿里/腾讯，国外代理接管
+dns:
+  enable: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  fallback:
+    - 8.8.8.8
+    - 1.1.1.1
+  fake-ip-filter:
+    - '*.lan'
+    - '+.speedtest.net'
+    - '+.msftconnecttest.com'
+    - '+.msftncsi.com'
+
+# ==========================================================
+# 代理节点
+# ==========================================================
 proxies:
-  - name: Tokyo
-    type: vless
-    server: 108.160.142.78
-    port: 35222
-    uuid: e2cffb3a-2325-4ca1-9065-3e1ce2a6b729
-    network: tcp
-    tls: true
-    udp: true
-    flow: xtls-rprx-vision
-    servername: software.download.prss.microsoft.com
-    client-fingerprint: chrome
-    reality-opts:
-      public-key: NyqpsdgtVsbRMZyZBAjHDDBvkeY-l5vtrNRxj9hUOx0
-      short-id: 6ba85179e30d4fc2
-      
   - name: Seoul
     type: vless
     server: 158.247.195.13
@@ -28,25 +47,8 @@ proxies:
     udp: true
     flow: xtls-rprx-vision
     servername: osxapps.itunes.apple.com
+    reality-opts: {public-key: 66j5-hoiAnJYmD24btff-VoJ-Dp4nEk_DTCFPH9l9iI, short-id: 6ba85179e30d4fc2}
     client-fingerprint: chrome
-    reality-opts:
-      public-key: 66j5-hoiAnJYmD24btff-VoJ-Dp4nEk_DTCFPH9l9iI
-      short-id: 6ba85179e30d4fc2    
-
-  - name: Osaka
-    type: vless
-    server: 64.176.51.38
-    port: 26273
-    uuid: 681e16bd-ca8f-459f-8f7e-c812fe202e34
-    network: tcp
-    tls: true
-    udp: true
-    flow: xtls-rprx-vision
-    servername: lol.secure.dyn.riotcdn.net
-    client-fingerprint: chrome
-    reality-opts:
-      public-key: PVAWptRBr2fYsMhlkHkGgip_5xGntn4QklGmeBTn4S0
-      short-id: 6ba85179e30d4fc2 
 
   - name: Singapore
     type: vless
@@ -58,10 +60,8 @@ proxies:
     udp: true
     flow: xtls-rprx-vision
     servername: itunes.apple.com
+    reality-opts: {public-key: fN55GToH2lUYAx8ng20ojLIX-qHPhdwM7DQQKQgIZn0, short-id: 6ba85179e30d4fc2}
     client-fingerprint: chrome
-    reality-opts:
-      public-key: fN55GToH2lUYAx8ng20ojLIX-qHPhdwM7DQQKQgIZn0
-      short-id: 6ba85179e30d4fc2    
 
   - name: LA
     type: vless
@@ -73,81 +73,93 @@ proxies:
     udp: true
     flow: xtls-rprx-vision
     servername: lol.secure.dyn.riotcdn.net
+    reality-opts: {public-key: olvsja0ArzSGY9emnWAhNpw5BiGkmZJMFHymCQIAr0k, short-id: 6ba85179e30d4fc2}
     client-fingerprint: chrome
-    reality-opts:
-      public-key: olvsja0ArzSGY9emnWAhNpw5BiGkmZJMFHymCQIAr0k
-      short-id: 6ba85179e30d4fc2   
 
+# ==========================================================
+# 策略组
+# ==========================================================
 proxy-groups:
-  - name: Auto
+  - name: 🚀 节点选择
+    type: select
+    proxies: [⚡️ 全速优选, Seoul, Singapore, LA, DIRECT]
+
+  - name: 🎬 流媒体
     type: url-test
-    proxies:
-      - Tokyo
-      - Osaka
-      - Seoul
-      - Singapore
-      - LA
+    url: http://www.gstatic.com/generate_204
+    interval: 120    # 2分钟测速一次，应对晚高峰拥塞
+    tolerance: 50
+    proxies: [Seoul, Singapore, LA]
+
+  - name: 📲 社交工具
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 600
+    proxies: [Seoul, Singapore, LA]
+
+  - name: 🛒 谷歌服务
+    type: url-test
     url: http://www.gstatic.com/generate_204
     interval: 300
+    proxies: [Singapore, Seoul, LA]
 
-  - name: Proxy
+  - name: 🤖 人工智能
     type: select
-    proxies:
-      - Auto
-      - Tokyo
-      - Osaka
-      - Seoul
-      - Singapore
-      - LA
-      - DIRECT
-      
+    proxies: [LA, Singapore, Seoul]
+
+  - name: 🚫 广告拦截
+    type: select
+    proxies: [REJECT, DIRECT]
+
+  - name: ⚡️ 全速优选
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+    proxies: [Seoul, Singapore, LA]
+
+# ==========================================================
+# 路由规则
+# ==========================================================
 rules:
-  # ===== AI =====
-  - DOMAIN-SUFFIX,openai.com,Proxy
-  - DOMAIN-SUFFIX,chatgpt.com,Proxy
-  - DOMAIN-SUFFIX,claude.ai,Proxy
-  - DOMAIN-SUFFIX,anthropic.com,Proxy
-  - DOMAIN-SUFFIX,poe.com,Proxy
-  - DOMAIN-SUFFIX,perplexity.ai,Proxy
-  - DOMAIN-SUFFIX,cursor.sh,Proxy
+  # 基础拦截与本地直连
+  - DOMAIN-KEYWORD,adserver,🚫 广告拦截
+  - DOMAIN-KEYWORD,adtrack,🚫 广告拦截
+  - DOMAIN-SUFFIX,googleadservices.com,🚫 广告拦截
+  - DOMAIN-SUFFIX,local,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  
+  # AI 模块
+  - DOMAIN-SUFFIX,openai.com,🤖 人工智能
+  - DOMAIN-SUFFIX,chatgpt.com,🤖 人工智能
+  - DOMAIN-SUFFIX,oaistatic.com,🤖 人工智能
+  - DOMAIN-SUFFIX,claude.ai,🤖 人工智能
+  - DOMAIN-SUFFIX,anthropic.com,🤖 人工智能
 
-  # ===== GitHub / 开发 =====
-  - DOMAIN-SUFFIX,github.com,Proxy
-  - DOMAIN-SUFFIX,githubusercontent.com,Proxy
-  - DOMAIN-SUFFIX,githubassets.com,Proxy
-  - DOMAIN-SUFFIX,npmjs.org,Proxy
-  - DOMAIN-SUFFIX,registry.npmjs.org,Proxy
-  - DOMAIN-SUFFIX,yarnpkg.com,Proxy
-  - DOMAIN-SUFFIX,deno.land,Proxy
+  # 流媒体与视频
+  - DOMAIN-SUFFIX,youtube.com,🎬 流媒体
+  - DOMAIN-SUFFIX,googlevideo.com,🎬 流媒体
+  - DOMAIN-SUFFIX,netflix.com,🎬 流媒体
+  - DOMAIN-SUFFIX,netflix.net,🎬 流媒体
+  - DOMAIN-SUFFIX,nflxvideo.net,🎬 流媒体
+  - DOMAIN-SUFFIX,disneyplus.com,🎬 流媒体
 
-  # ===== Google 全家桶 =====
-  - DOMAIN-SUFFIX,google.com,Proxy
-  - DOMAIN-SUFFIX,gstatic.com,Proxy
-  - DOMAIN-SUFFIX,googleapis.com,Proxy
-  - DOMAIN-SUFFIX,ggpht.com,Proxy
-  - DOMAIN-SUFFIX,googlevideo.com,Proxy
-  - DOMAIN-SUFFIX,youtube.com,Proxy
-  - DOMAIN-SUFFIX,ytimg.com,Proxy
+  # 社交工具
+  - DOMAIN-SUFFIX,telegram.org,📲 社交工具
+  - DOMAIN-SUFFIX,t.me,📲 社交工具
+  - DOMAIN-SUFFIX,x.com,📲 社交工具
+  - DOMAIN-SUFFIX,twitter.com,📲 社交工具
+  - DOMAIN-SUFFIX,discord.com,📲 社交工具
 
-  # ===== 社交 / 通讯 =====
-  - DOMAIN-SUFFIX,telegram.org,Proxy
-  - DOMAIN-SUFFIX,t.me,Proxy
-  - DOMAIN-SUFFIX,x.com,Proxy
-  - DOMAIN-SUFFIX,twimg.com,Proxy
-  - DOMAIN-SUFFIX,discord.com,Proxy
+  # 谷歌/安卓系统服务
+  - DOMAIN-SUFFIX,google.com,🛒 谷歌服务
+  - DOMAIN-SUFFIX,googleapis.com,🛒 谷歌服务
+  - DOMAIN-SUFFIX,gstatic.com,🛒 谷歌服务
+  - DOMAIN-SUFFIX,android.com,🛒 谷歌服务
+  - DOMAIN-SUFFIX,gvt1.com,🛒 谷歌服务
+  - DOMAIN-SUFFIX,play.google.com,🛒 谷歌服务
 
-  # ===== 游戏 / Steam =====
-  - DOMAIN-SUFFIX,steampowered.com,Proxy
-  - DOMAIN-SUFFIX,steamcommunity.com,Proxy
-  - DOMAIN-SUFFIX,steamstatic.com,Proxy
-
-  # ===== 流媒体 =====
-  - DOMAIN-SUFFIX,netflix.com,Proxy
-  - DOMAIN-SUFFIX,nflxvideo.net,Proxy
-  - DOMAIN-SUFFIX,disneyplus.com,Proxy
-
-  # ===== 国内直连 =====
+  # 国内 IP 直连 (确保国内网速不受影响)
   - GEOIP,CN,DIRECT
-
-  # ===== 兜底 =====
-  - MATCH,Proxy
+  
+  # 兜底
+  - MATCH,🚀 节点选择
