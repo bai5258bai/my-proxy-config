@@ -1,6 +1,6 @@
-# ==========================================================
-# 基础设置 & TUN 模式优化
-# ==========================================================
+# ==================================================
+# 基础
+# ==================================================
 mixed-port: 7890
 allow-lan: true
 mode: rule
@@ -8,15 +8,18 @@ log-level: info
 ipv6: false
 external-controller: 127.0.0.1:9090
 
-# TUN 模式配置：接管整机流量且不影响国内网速
+# ==================================================
+# TUN
+# ==================================================
 tun:
   enable: true
   stack: system
   auto-route: true
   auto-detect-interface: true
-  dns-hierarchical: true
 
-# DNS 优化：国内用阿里/腾讯，国外代理接管
+# ==================================================
+# DNS（生产级 FakeIP）
+# ==================================================
 dns:
   enable: true
   enhanced-mode: fake-ip
@@ -25,141 +28,146 @@ dns:
     - 223.5.5.5
     - 119.29.29.29
   fallback:
-    - 8.8.8.8
     - 1.1.1.1
+    - 8.8.8.8
   fake-ip-filter:
     - '*.lan'
-    - '+.speedtest.net'
+    - '*.local'
+    - '*.googlevideo.com'
     - '+.msftconnecttest.com'
     - '+.msftncsi.com'
 
-# ==========================================================
-# 代理节点
-# ==========================================================
+# ==================================================
+# 节点（Reality）
+# ==================================================
 proxies:
-  - name: Seoul
-    type: vless
-    server: 158.247.195.13
-    port: 25403
-    uuid: eceaa5f5-e244-4445-95d0-6f66379a4faa
-    network: tcp
-    tls: true
-    udp: true
-    flow: xtls-rprx-vision
-    servername: osxapps.itunes.apple.com
-    reality-opts: {public-key: 66j5-hoiAnJYmD24btff-VoJ-Dp4nEk_DTCFPH9l9iI, short-id: 6ba85179e30d4fc2}
-    client-fingerprint: chrome
 
-  - name: Singapore
-    type: vless
-    server: 64.176.83.204
-    port: 37603
-    uuid: 86f3bb0d-0d00-4db1-af36-d9d8ce7b00d9
-    network: tcp
-    tls: true
-    udp: true
-    flow: xtls-rprx-vision
-    servername: itunes.apple.com
-    reality-opts: {public-key: fN55GToH2lUYAx8ng20ojLIX-qHPhdwM7DQQKQgIZn0, short-id: 6ba85179e30d4fc2}
-    client-fingerprint: chrome
+- name: Seoul
+  type: vless
+  server: 158.247.195.13
+  port: 25403
+  uuid: eceaa5f5-e244-4445-95d0-6f66379a4faa
+  network: tcp
+  tls: true
+  udp: true
+  flow: xtls-rprx-vision
+  servername: osxapps.itunes.apple.com
+  reality-opts:
+    public-key: 66j5-hoiAnJYmD24btff-VoJ-Dp4nEk_DTCFPH9l9iI
+    short-id: 6ba85179e30d4fc2
+  client-fingerprint: chrome
 
-  - name: LA
-    type: vless
-    server: 45.32.91.48
-    port: 38999
-    uuid: 6169b9ab-e66b-4807-be5f-4610a26924f4
-    network: tcp
-    tls: true
-    udp: true
-    flow: xtls-rprx-vision
-    servername: lol.secure.dyn.riotcdn.net
-    reality-opts: {public-key: olvsja0ArzSGY9emnWAhNpw5BiGkmZJMFHymCQIAr0k, short-id: 6ba85179e30d4fc2}
-    client-fingerprint: chrome
+- name: Singapore
+  type: vless
+  server: 64.176.83.204
+  port: 37603
+  uuid: 86f3bb0d-0d00-4db1-af36-d9d8ce7b00d9
+  network: tcp
+  tls: true
+  udp: true
+  flow: xtls-rprx-vision
+  servername: itunes.apple.com
+  reality-opts:
+    public-key: fN55GToH2lUYAx8ng20ojLIX-qHPhdwM7DQQKQgIZn0
+    short-id: 6ba85179e30d4fc2
+  client-fingerprint: chrome
 
-# ==========================================================
-# 策略组
-# ==========================================================
+- name: LA
+  type: vless
+  server: 45.32.91.48
+  port: 38999
+  uuid: 6169b9ab-e66b-4807-be5f-4610a26924f4
+  network: tcp
+  tls: true
+  udp: true
+  flow: xtls-rprx-vision
+  servername: lol.secure.dyn.riotcdn.net
+  reality-opts:
+    public-key: olvsja0ArzSGY9emnWAhNpw5BiGkmZJMFHymCQIAr0k
+    short-id: 6ba85179e30d4fc2
+  client-fingerprint: chrome
+
+# ==================================================
+# 策略组（毕业级结构）
+# ==================================================
 proxy-groups:
-  - name: 🚀 节点选择
-    type: select
-    proxies: [⚡️ 全速优选, Seoul, Singapore, LA, DIRECT]
 
-  - name: 🎬 流媒体
-    type: url-test
-    url: http://www.gstatic.com/generate_204
-    interval: 120    # 2分钟测速一次，应对晚高峰拥塞
-    tolerance: 50
-    proxies: [Seoul, Singapore, LA]
+- name: 🚀 节点选择
+  type: select
+  proxies:
+    - ⚡ 自动优选
+    - Seoul
+    - Singapore
+    - LA
+    - DIRECT
 
-  - name: 📲 社交工具
-    type: url-test
-    url: http://www.gstatic.com/generate_204
-    interval: 600
-    proxies: [Seoul, Singapore, LA]
+- name: ⚡ 自动优选
+  type: url-test
+  url: http://cp.cloudflare.com/generate_204
+  interval: 300
+  tolerance: 100
+  proxies:
+    - Seoul
+    - Singapore
+    - LA
 
-  - name: 🛒 谷歌服务
-    type: url-test
-    url: http://www.gstatic.com/generate_204
-    interval: 300
-    proxies: [Singapore, Seoul, LA]
+- name: 🤖 AI
+  type: select
+  proxies:
+    - ⚡ 自动优选
+    - Singapore
+    - Seoul
+    - LA
 
-  - name: 🤖 人工智能
-    type: select
-    proxies: [LA, Singapore, Seoul]
+- name: 🎬 YouTube
+  type: select
+  proxies:
+    - ⚡ 自动优选
+    - LA
+    - Singapore
+    - Seoul
 
-  - name: 🚫 广告拦截
-    type: select
-    proxies: [REJECT, DIRECT]
+- name: 🌍 国外网站
+  type: select
+  proxies:
+    - ⚡ 自动优选
+    - Seoul
+    - Singapore
+    - LA
 
-  - name: ⚡️ 全速优选
-    type: url-test
-    url: http://www.gstatic.com/generate_204
-    interval: 300
-    proxies: [Seoul, Singapore, LA]
-
-# ==========================================================
-# 路由规则
-# ==========================================================
+# ==================================================
+# 规则（简洁高效）
+# ==================================================
 rules:
-  # 基础拦截与本地直连
-  - DOMAIN-KEYWORD,adserver,🚫 广告拦截
-  - DOMAIN-KEYWORD,adtrack,🚫 广告拦截
-  - DOMAIN-SUFFIX,googleadservices.com,🚫 广告拦截
-  - DOMAIN-SUFFIX,local,DIRECT
-  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
-  
-  # AI 模块
-  - DOMAIN-SUFFIX,openai.com,🤖 人工智能
-  - DOMAIN-SUFFIX,chatgpt.com,🤖 人工智能
-  - DOMAIN-SUFFIX,oaistatic.com,🤖 人工智能
-  - DOMAIN-SUFFIX,claude.ai,🤖 人工智能
-  - DOMAIN-SUFFIX,anthropic.com,🤖 人工智能
 
-  # 流媒体与视频
-  - DOMAIN-SUFFIX,youtube.com,🎬 流媒体
-  - DOMAIN-SUFFIX,googlevideo.com,🎬 流媒体
-  - DOMAIN-SUFFIX,netflix.com,🎬 流媒体
-  - DOMAIN-SUFFIX,netflix.net,🎬 流媒体
-  - DOMAIN-SUFFIX,nflxvideo.net,🎬 流媒体
-  - DOMAIN-SUFFIX,disneyplus.com,🎬 流媒体
+# AI
+- DOMAIN-SUFFIX,openai.com,🤖 AI
+- DOMAIN-SUFFIX,chatgpt.com,🤖 AI
+- DOMAIN-SUFFIX,claude.ai,🤖 AI
+- DOMAIN-SUFFIX,anthropic.com,🤖 AI
+- DOMAIN-SUFFIX,oaistatic.com,🤖 AI
 
-  # 社交工具
-  - DOMAIN-SUFFIX,telegram.org,📲 社交工具
-  - DOMAIN-SUFFIX,t.me,📲 社交工具
-  - DOMAIN-SUFFIX,x.com,📲 社交工具
-  - DOMAIN-SUFFIX,twitter.com,📲 社交工具
-  - DOMAIN-SUFFIX,discord.com,📲 社交工具
+# YouTube
+- DOMAIN-SUFFIX,youtube.com,🎬 YouTube
+- DOMAIN-SUFFIX,googlevideo.com,🎬 YouTube
+- DOMAIN-SUFFIX,ytimg.com,🎬 YouTube
 
-  # 谷歌/安卓系统服务
-  - DOMAIN-SUFFIX,google.com,🛒 谷歌服务
-  - DOMAIN-SUFFIX,googleapis.com,🛒 谷歌服务
-  - DOMAIN-SUFFIX,gstatic.com,🛒 谷歌服务
-  - DOMAIN-SUFFIX,android.com,🛒 谷歌服务
-  - DOMAIN-SUFFIX,gvt1.com,🛒 谷歌服务
-  - DOMAIN-SUFFIX,play.google.com,🛒 谷歌服务
+# Google
+- DOMAIN-SUFFIX,google.com,🌍 国外网站
+- DOMAIN-SUFFIX,gstatic.com,🌍 国外网站
+- DOMAIN-SUFFIX,googleapis.com,🌍 国外网站
 
-  # 国内 IP 直连 (确保国内网速不受影响)
-  - GEOIP,CN,DIRECT
-  
-  # 兜底
-  - MATCH,🚀 节点选择
+# Telegram / X
+- DOMAIN-SUFFIX,telegram.org,🌍 国外网站
+- DOMAIN-SUFFIX,t.me,🌍 国外网站
+- DOMAIN-SUFFIX,x.com,🌍 国外网站
+
+# Steam
+- DOMAIN-SUFFIX,steampowered.com,🌍 国外网站
+- DOMAIN-SUFFIX,steamstatic.com,🌍 国外网站
+
+# 国内直连
+- GEOIP,CN,DIRECT
+
+# 兜底
+- MATCH,🚀 节点选择
