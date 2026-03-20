@@ -44,16 +44,16 @@ proxies:
 
 - name: Seoul
   type: vless
-  server: 158.247.195.13
-  port: 25403
-  uuid: eceaa5f5-e244-4445-95d0-6f66379a4faa
+  server: 158.247.222.33
+  port: 25152
+  uuid: c4908ca5-0dd2-4122-8afa-2d98b83d8438
   network: tcp
   tls: true
   udp: true
   flow: xtls-rprx-vision
-  servername: osxapps.itunes.apple.com
+  servername: www.oracle.com
   reality-opts:
-    public-key: 66j5-hoiAnJYmD24btff-VoJ-Dp4nEk_DTCFPH9l9iI
+    public-key: hE7Rge1lccNODzn_3JGoUtAin6tFOJlxg-R2ICrUGGw
     short-id: 6ba85179e30d4fc2
   client-fingerprint: chrome
 
@@ -72,20 +72,6 @@ proxies:
     short-id: 6ba85179e30d4fc2
   client-fingerprint: chrome
 
-- name: LA
-  type: vless
-  server: 45.32.91.48
-  port: 38999
-  uuid: 6169b9ab-e66b-4807-be5f-4610a26924f4
-  network: tcp
-  tls: true
-  udp: true
-  flow: xtls-rprx-vision
-  servername: lol.secure.dyn.riotcdn.net
-  reality-opts:
-    public-key: olvsja0ArzSGY9emnWAhNpw5BiGkmZJMFHymCQIAr0k
-    short-id: 6ba85179e30d4fc2
-  client-fingerprint: chrome
 
 # ==================================================
 # 策略组（毕业级结构）
@@ -98,7 +84,6 @@ proxy-groups:
     - ⚡ 自动优选
     - Seoul
     - Singapore
-    - LA
     - DIRECT
 
 - name: ⚡ 自动优选
@@ -109,7 +94,6 @@ proxy-groups:
   proxies:
     - Seoul
     - Singapore
-    - LA
 
 - name: 🤖 AI
   type: select
@@ -117,13 +101,11 @@ proxy-groups:
     - ⚡ 自动优选
     - Singapore
     - Seoul
-    - LA
 
 - name: 🎬 YouTube
   type: select
   proxies:
     - ⚡ 自动优选
-    - LA
     - Singapore
     - Seoul
 
@@ -133,7 +115,6 @@ proxy-groups:
     - ⚡ 自动优选
     - Seoul
     - Singapore
-    - LA
 
 # ==================================================
 # 规则（简洁高效）
