@@ -147,6 +147,19 @@ rules:
 - DOMAIN-SUFFIX,steampowered.com,🌍 国外网站
 - DOMAIN-SUFFIX,steamstatic.com,🌍 国外网站
 
+# 迅雷直连规则
+- DOMAIN-SUFFIX,cdn.xunlei.com,DIRECT
+- DOMAIN-SUFFIX,sandai.net,DIRECT
+- DOMAIN-SUFFIX,xunlei.com,DIRECT
+- DOMAIN-SUFFIX,thunderurl.com,DIRECT
+- DOMAIN-SUFFIX,dl.xunlei.com,DIRECT
+- DOMAIN-SUFFIX,kuai.xunlei.com,DIRECT
+- DOMAIN-SUFFIX,static.xunlei.com,DIRECT
+- DOMAIN-SUFFIX,get.xunlei.com,DIRECT
+- DOMAIN-KEYWORD,xunlei,DIRECT
+- DOMAIN-KEYWORD,thunder,DIRECT
+- DOMAIN-KEYWORD,sandai,DIRECT
+
 # 国内直连
 - GEOIP,CN,DIRECT
 
