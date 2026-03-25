@@ -64,7 +64,7 @@ proxies:
   type: vless
   server: 158.247.222.33
   port: 25152
-  uuid: c4908ca5-0dd2-4122-8afa-2d98b83d8438
+  uuid: bd64aee4-29db-483b-9309-08de45f228f8
   network: tcp
   tls: true
   udp: true
