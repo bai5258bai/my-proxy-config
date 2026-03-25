@@ -1,5 +1,5 @@
 # ==================================================
-# 基础
+# 基础配置
 # ==================================================
 mixed-port: 7890
 allow-lan: true
@@ -7,41 +7,59 @@ mode: rule
 log-level: info
 ipv6: false
 external-controller: 127.0.0.1:9090
-
+secret: ""
 # ==================================================
-# TUN
+# TUN 模式（日常主力推荐）
 # ==================================================
 tun:
   enable: true
   stack: system
   auto-route: true
   auto-detect-interface: true
-
+  dns-hijack:
+    - any:53
+  strict-route: false
 # ==================================================
-# DNS（生产级 FakeIP）
+# DNS 优化（防泄漏 + 国内加速）
 # ==================================================
 dns:
   enable: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
+  listen: 0.0.0.0:1053
   nameserver:
     - 223.5.5.5
     - 119.29.29.29
+    - 114.114.114.114
   fallback:
     - 1.1.1.1
     - 8.8.8.8
+    - 9.9.9.9
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    ipcidr:
+      - 240.0.0.0/4
   fake-ip-filter:
     - '*.lan'
     - '*.local'
     - '*.googlevideo.com'
     - '+.msftconnecttest.com'
     - '+.msftncsi.com'
-
+    - '+.stun.*.*'
+    - '+.stun.*.*.*'
+    - '+.stun.*.*.*.*'
+    - '+.stun.*.*.*.*.*'
+    - 'time.*.com'
+    - 'time.*.gov'
+    - 'time.*.edu.cn'
+    - 'ntp.*.com'
+    - 'ntp.*.gov'
+    - 'ntp.*.edu.cn'
 # ==================================================
-# 节点（Reality）
+# 节点配置（单节点优化）
 # ==================================================
 proxies:
-
 - name: Seoul
   type: vless
   server: 158.247.222.33
@@ -56,112 +74,209 @@ proxies:
     public-key: hE7Rge1lccNODzn_3JGoUtAin6tFOJlxg-R2ICrUGGw
     short-id: 6ba85179e30d4fc2
   client-fingerprint: chrome
-
-- name: Singapore
-  type: vless
-  server: 64.176.83.204
-  port: 37603
-  uuid: 86f3bb0d-0d00-4db1-af36-d9d8ce7b00d9
-  network: tcp
-  tls: true
-  udp: true
-  flow: xtls-rprx-vision
-  servername: itunes.apple.com
-  reality-opts:
-    public-key: fN55GToH2lUYAx8ng20ojLIX-qHPhdwM7DQQKQgIZn0
-    short-id: 6ba85179e30d4fc2
-  client-fingerprint: chrome
-
-
+  smux:
+    enabled: true
+    protocol: h2mux
+    max-connections: 4
+    min-streams: 4
+    max-streams: 16
+  opts:
+    keep-alive-interval: 15
+    keep-alive-idle-timeout: 30
 # ==================================================
-# 策略组（毕业级结构）
+# 策略组（已按要求优化）
 # ==================================================
 proxy-groups:
-
 - name: 🚀 节点选择
   type: select
   proxies:
-    - ⚡ 自动优选
     - Seoul
-    - Singapore
     - DIRECT
-
-- name: ⚡ 自动优选
-  type: url-test
-  url: http://cp.cloudflare.com/generate_204
-  interval: 300
-  tolerance: 100
-  proxies:
-    - Seoul
-    - Singapore
-
-- name: 🤖 AI
+- name: 🤖 AI 专用
   type: select
   proxies:
-    - ⚡ 自动优选
-    - Singapore
     - Seoul
-
-- name: 🎬 YouTube
+- name: 🎮 Street Fighter 6
   type: select
   proxies:
-    - ⚡ 自动优选
-    - Singapore
     - Seoul
-
+    - DIRECT
+- name: 🎬 视频媒体
+  type: select
+  proxies:
+    - Seoul
+    - DIRECT
 - name: 🌍 国外网站
   type: select
   proxies:
-    - ⚡ 自动优选
     - Seoul
-    - Singapore
-
+    - DIRECT
+- name: 📥 下载服务
+  type: select
+  proxies:
+    - DIRECT
+    - Seoul
 # ==================================================
-# 规则（简洁高效）
+# 规则（已按要求优化）
 # ==================================================
 rules:
-
-# AI
-- DOMAIN-SUFFIX,openai.com,🤖 AI
-- DOMAIN-SUFFIX,chatgpt.com,🤖 AI
-- DOMAIN-SUFFIX,claude.ai,🤖 AI
-- DOMAIN-SUFFIX,anthropic.com,🤖 AI
-- DOMAIN-SUFFIX,oaistatic.com,🤖 AI
-
-# YouTube
-- DOMAIN-SUFFIX,youtube.com,🎬 YouTube
-- DOMAIN-SUFFIX,googlevideo.com,🎬 YouTube
-- DOMAIN-SUFFIX,ytimg.com,🎬 YouTube
-
-# Google
+# ==================== AI 专用（防封优化）====================
+- DOMAIN-SUFFIX,openai.com,🤖 AI 专用
+- DOMAIN-SUFFIX,chatgpt.com,🤖 AI 专用
+- DOMAIN-SUFFIX,claude.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,anthropic.com,🤖 AI 专用
+- DOMAIN-SUFFIX,oaistatic.com,🤖 AI 专用
+- DOMAIN-SUFFIX,oaiusercontent.com,🤖 AI 专用
+- DOMAIN-SUFFIX,api.openai.com,🤖 AI 专用
+- DOMAIN-SUFFIX,platform.openai.com,🤖 AI 专用
+- DOMAIN-KEYWORD,openai,🤖 AI 专用
+- DOMAIN-KEYWORD,chatgpt,🤖 AI 专用
+- DOMAIN-SUFFIX,claudecode.com,🤖 AI 专用
+- DOMAIN-SUFFIX,deepseek.com,🤖 AI 专用
+- DOMAIN-SUFFIX,deepseek.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,midjourney.com,🤖 AI 专用
+- DOMAIN-SUFFIX,perplexity.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,cohere.com,🤖 AI 专用
+- DOMAIN-SUFFIX,ai.com,🤖 AI 专用
+# ==================== YouTube/Google ====================
+- DOMAIN-SUFFIX,youtube.com,🎬 视频媒体
+- DOMAIN-SUFFIX,youtube-nocookie.com,🎬 视频媒体
+- DOMAIN-SUFFIX,googlevideo.com,🎬 视频媒体
+- DOMAIN-SUFFIX,ytimg.com,🎬 视频媒体
+- DOMAIN-SUFFIX,yt3.ggpht.com,🎬 视频媒体
+- DOMAIN-KEYWORD,youtube,🎬 视频媒体
 - DOMAIN-SUFFIX,google.com,🌍 国外网站
 - DOMAIN-SUFFIX,gstatic.com,🌍 国外网站
 - DOMAIN-SUFFIX,googleapis.com,🌍 国外网站
-
-# Telegram / X
+- DOMAIN-SUFFIX,googleusercontent.com,🌍 国外网站
+- DOMAIN-SUFFIX,gvt1.com,🌍 国外网站
+- DOMAIN-SUFFIX,gvt2.com,🌍 国外网站
+# ==================== 社交平台 ====================
 - DOMAIN-SUFFIX,telegram.org,🌍 国外网站
+- DOMAIN-SUFFIX,telegram.me,🌍 国外网站
 - DOMAIN-SUFFIX,t.me,🌍 国外网站
+- DOMAIN-SUFFIX,tdesktop.com,🌍 国外网站
+- DOMAIN-KEYWORD,telegram,🌍 国外网站
 - DOMAIN-SUFFIX,x.com,🌍 国外网站
-
-# Steam
-- DOMAIN-SUFFIX,steampowered.com,🌍 国外网站
-- DOMAIN-SUFFIX,steamstatic.com,🌍 国外网站
-
-# 迅雷直连规则
-- DOMAIN-SUFFIX,cdn.xunlei.com,DIRECT
-- DOMAIN-SUFFIX,sandai.net,DIRECT
-- DOMAIN-SUFFIX,xunlei.com,DIRECT
-- DOMAIN-SUFFIX,thunderurl.com,DIRECT
-- DOMAIN-SUFFIX,dl.xunlei.com,DIRECT
-- DOMAIN-SUFFIX,kuai.xunlei.com,DIRECT
-- DOMAIN-SUFFIX,static.xunlei.com,DIRECT
-- DOMAIN-SUFFIX,get.xunlei.com,DIRECT
-- DOMAIN-KEYWORD,xunlei,DIRECT
-- DOMAIN-KEYWORD,thunder,DIRECT
-- DOMAIN-KEYWORD,sandai,DIRECT
-
-# 国内直连
+- DOMAIN-SUFFIX,twitter.com,🌍 国外网站
+- DOMAIN-SUFFIX,twimg.com,🌍 国外网站
+- DOMAIN-KEYWORD,twitter,🌍 国外网站
+- DOMAIN-SUFFIX,facebook.com,🌍 国外网站
+- DOMAIN-SUFFIX,fbcdn.net,🌍 国外网站
+- DOMAIN-SUFFIX,instagram.com,🌍 国外网站
+- DOMAIN-SUFFIX,whatsapp.com,🌍 国外网站
+- DOMAIN-SUFFIX,discord.com,🌍 国外网站
+- DOMAIN-SUFFIX,discord.gg,🌍 国外网站
+- DOMAIN-SUFFIX,discordapp.com,🌍 国外网站
+- DOMAIN-SUFFIX,discordapp.net,🌍 国外网站
+# ==================== Steam 平台（下载直连）====================
+- DOMAIN-SUFFIX,steamcommunity.com,🌍 国外网站
+- DOMAIN-SUFFIX,steamgames.com,🌍 国外网站
+- DOMAIN-SUFFIX,steambroadcast.akamaized.net,DIRECT
+- DOMAIN-SUFFIX,steamcdn-a.akamaihd.net,DIRECT
+- DOMAIN-SUFFIX,steamcontent.com,DIRECT
+- DOMAIN-SUFFIX,steamstore-a.akamaihd.net,DIRECT
+- DOMAIN-SUFFIX,steamuserimages-a.akamaihd.net,DIRECT
+- DOMAIN-KEYWORD,steamcdn,DIRECT
+- DOMAIN-KEYWORD,steamcontent,DIRECT
+# ==================== Street Fighter 6 专用规则（游戏联机）====================
+- DOMAIN-SUFFIX,capcom.com,🎮 Street Fighter 6
+- DOMAIN-SUFFIX,capcom.co.jp,🎮 Street Fighter 6
+- DOMAIN-SUFFIX,streetfighter.com,🎮 Street Fighter 6
+- DOMAIN-KEYWORD,streetfighter,🎮 Street Fighter 6
+- DOMAIN-KEYWORD,capcom,🎮 Street Fighter 6
+- DOMAIN-SUFFIX,playstation.com,🎮 Street Fighter 6
+- DOMAIN-SUFFIX,playstation.net,🎮 Street Fighter 6
+- DOMAIN-SUFFIX,sonyentertainmentnetwork.com,🎮 Street Fighter 6
+- DOMAIN-SUFFIX,xbox.com,🎮 Street Fighter 6
+- DOMAIN-SUFFIX,xboxlive.com,🎮 Street Fighter 6
+- DOMAIN-SUFFIX,microsoftonline.com,🎮 Street Fighter 6
+- DOMAIN-KEYWORD,xbox,🎮 Street Fighter 6
+- DOMAIN-KEYWORD,playstation,🎮 Street Fighter 6
+- DOMAIN-SUFFIX,steam-apicdn.akamaized.net,🎮 Street Fighter 6
+- DOMAIN-SUFFIX,steamcloud.akamaized.net,🎮 Street Fighter 6
+# ==================== 迅雷下载（直连优先）====================
+- DOMAIN-SUFFIX,cdn.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,sandai.net,📥 下载服务
+- DOMAIN-SUFFIX,xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,thunderurl.com,📥 下载服务
+- DOMAIN-SUFFIX,dl.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,kuai.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,static.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,get.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,update.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,down.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,download.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,api.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,api-ssl.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,hub5btmain.sandai.net,📥 下载服务
+- DOMAIN-SUFFIX,hub5emu.sandai.net,📥 下载服务
+- DOMAIN-SUFFIX,main.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,etl.xlmc.sandai.net,📥 下载服务
+- DOMAIN-KEYWORD,xunlei,📥 下载服务
+- DOMAIN-KEYWORD,thunder,📥 下载服务
+- DOMAIN-KEYWORD,sandai,📥 下载服务
+- DOMAIN-KEYWORD,xl,📥 下载服务
+# ==================== 其他下载服务 ====================
+- DOMAIN-SUFFIX,github.com,📥 下载服务
+- DOMAIN-SUFFIX,githubusercontent.com,📥 下载服务
+- DOMAIN-SUFFIX,raw.githubusercontent.com,📥 下载服务
+- DOMAIN-KEYWORD,github,📥 下载服务
+# ==================== 国内直连（完善版）====================
+- DOMAIN-SUFFIX,163.com,DIRECT
+- DOMAIN-SUFFIX,126.com,DIRECT
+- DOMAIN-SUFFIX,qq.com,DIRECT
+- DOMAIN-SUFFIX,tencent.com,DIRECT
+- DOMAIN-SUFFIX,weixin.com,DIRECT
+- DOMAIN-SUFFIX,wechat.com,DIRECT
+- DOMAIN-SUFFIX,alipay.com,DIRECT
+- DOMAIN-SUFFIX,taobao.com,DIRECT
+- DOMAIN-SUFFIX,tmall.com,DIRECT
+- DOMAIN-SUFFIX,aliyun.com,DIRECT
+- DOMAIN-SUFFIX,baidu.com,DIRECT
+- DOMAIN-SUFFIX,bdimg.com,DIRECT
+- DOMAIN-SUFFIX,jd.com,DIRECT
+- DOMAIN-SUFFIX,360buyimg.com,DIRECT
+- DOMAIN-SUFFIX,mi.com,DIRECT
+- DOMAIN-SUFFIX,xiaomi.com,DIRECT
+- DOMAIN-SUFFIX,bilibili.com,DIRECT
+- DOMAIN-SUFFIX,biliapi.net,DIRECT
+- DOMAIN-SUFFIX,biliapi.com,DIRECT
+- DOMAIN-SUFFIX,acg.tv,DIRECT
+- DOMAIN-SUFFIX,acgvideo.com,DIRECT
+- DOMAIN-SUFFIX,iqiyi.com,DIRECT
+- DOMAIN-SUFFIX,iqiyipic.com,DIRECT
+- DOMAIN-SUFFIX,youku.com,DIRECT
+- DOMAIN-SUFFIX,ykimg.com,DIRECT
+- DOMAIN-SUFFIX,sohu.com,DIRECT
+- DOMAIN-SUFFIX,sina.com,DIRECT
+- DOMAIN-SUFFIX,weibo.com,DIRECT
+- DOMAIN-SUFFIX,weibo.cn,DIRECT
+- DOMAIN-SUFFIX,zhihu.com,DIRECT
+- DOMAIN-SUFFIX,zhimg.com,DIRECT
+- DOMAIN-SUFFIX,douyin.com,DIRECT
+- DOMAIN-SUFFIX,iesdouyin.com,DIRECT
+- DOMAIN-SUFFIX,amap.com,DIRECT
+- DOMAIN-SUFFIX,gaode.com,DIRECT
+- DOMAIN-SUFFIX,meituan.com,DIRECT
+- DOMAIN-SUFFIX,meituan.net,DIRECT
+- DOMAIN-SUFFIX,ele.me,DIRECT
+- DOMAIN-SUFFIX,ctrip.com,DIRECT
+- DOMAIN-SUFFIX,12306.cn,DIRECT
+- DOMAIN-SUFFIX,icbc.com.cn,DIRECT
+- DOMAIN-SUFFIX,ccb.com,DIRECT
+- DOMAIN-SUFFIX,abc.com.cn,DIRECT
+- DOMAIN-SUFFIX,cmpassport.com,DIRECT
+- DOMAIN-SUFFIX,10010.com,DIRECT
+- DOMAIN-SUFFIX,189.cn,DIRECT
+- DOMAIN-KEYWORD,weixin,DIRECT
+- DOMAIN-KEYWORD,wechat,DIRECT
+- DOMAIN-KEYWORD,alipay,DIRECT
+- DOMAIN-KEYWORD,taobao,DIRECT
+- DOMAIN-KEYWORD,baidu,DIRECT
+- DOMAIN-KEYWORD,qq,DIRECT
+- DOMAIN-KEYWORD,163,DIRECT
+- DOMAIN-KEYWORD,jd,DIRECT
 - GEOIP,CN,DIRECT
-
-# 兜底
+# ==================== 兜底规则 ====================
 - MATCH,🚀 节点选择
