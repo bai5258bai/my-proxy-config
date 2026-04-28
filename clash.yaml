@@ -22,12 +22,20 @@ dns:
   enable: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
   nameserver:
     - 223.5.5.5
     - 119.29.29.29
   fallback:
     - 1.1.1.1
     - 8.8.8.8
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    ipcidr:
+      - 240.0.0.0/4
   fake-ip-filter:
     - '*.lan'
     - '*.local'
@@ -93,20 +101,68 @@ proxy-groups:
 # 规则（优化版）
 # ==================================================
 rules:
-# ==================== AI 专用（防封优化）====================
+# ==================== 国内 AI / 国内 AI API（直连）====================
+- DOMAIN-SUFFIX,deepseek.com,DIRECT
+- DOMAIN-SUFFIX,deepseek.ai,DIRECT
+- DOMAIN-SUFFIX,kimi.com,DIRECT
+- DOMAIN-SUFFIX,moonshot.cn,DIRECT
+- DOMAIN-SUFFIX,qwen.ai,DIRECT
+- DOMAIN-SUFFIX,qwenlm.ai,DIRECT
+- DOMAIN-SUFFIX,tongyi.com,DIRECT
+- DOMAIN-SUFFIX,dashscope.aliyuncs.com,DIRECT
+- DOMAIN-SUFFIX,doubao.com,DIRECT
+- DOMAIN-SUFFIX,volces.com,DIRECT
+- DOMAIN-SUFFIX,volcengine.com,DIRECT
+- DOMAIN-SUFFIX,volcengineapi.com,DIRECT
+- DOMAIN-SUFFIX,bigmodel.cn,DIRECT
+- DOMAIN-SUFFIX,zhipuai.cn,DIRECT
+- DOMAIN-SUFFIX,chatglm.cn,DIRECT
+- DOMAIN-SUFFIX,minimax.chat,DIRECT
+- DOMAIN-SUFFIX,minimaxi.com,DIRECT
+- DOMAIN-SUFFIX,baichuan-ai.com,DIRECT
+- DOMAIN-SUFFIX,modelscope.cn,DIRECT
+- DOMAIN-SUFFIX,siliconflow.cn,DIRECT
+- DOMAIN-SUFFIX,stepfun.com,DIRECT
+- DOMAIN-SUFFIX,01.ai,DIRECT
+- DOMAIN-SUFFIX,hunyuan.tencent.com,DIRECT
+- DOMAIN-SUFFIX,tencentcloudapi.com,DIRECT
+- DOMAIN-SUFFIX,yiyan.baidu.com,DIRECT
+- DOMAIN-SUFFIX,wenxin.baidu.com,DIRECT
+- DOMAIN-SUFFIX,qianfan.cloud.baidu.com,DIRECT
+- DOMAIN-SUFFIX,xfyun.cn,DIRECT
+- DOMAIN-SUFFIX,sparkdesk.cn,DIRECT
+# ==================== 国外 AI 专用（防封优化，强制代理）====================
 - DOMAIN-SUFFIX,openai.com,🤖 AI 专用
 - DOMAIN-SUFFIX,chatgpt.com,🤖 AI 专用
-- DOMAIN-SUFFIX,claude.ai,🤖 AI 专用
-- DOMAIN-SUFFIX,anthropic.com,🤖 AI 专用
 - DOMAIN-SUFFIX,oaistatic.com,🤖 AI 专用
 - DOMAIN-SUFFIX,oaiusercontent.com,🤖 AI 专用
-- DOMAIN-SUFFIX,api.openai.com,🤖 AI 专用
-- DOMAIN-SUFFIX,platform.openai.com,🤖 AI 专用
+- DOMAIN-SUFFIX,claude.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,anthropic.com,🤖 AI 专用
+- DOMAIN-SUFFIX,console.anthropic.com,🤖 AI 专用
+- DOMAIN-SUFFIX,gemini.google.com,🤖 AI 专用
+- DOMAIN-SUFFIX,ai.google.dev,🤖 AI 专用
+- DOMAIN-SUFFIX,aistudio.google.com,🤖 AI 专用
+- DOMAIN-SUFFIX,generativelanguage.googleapis.com,🤖 AI 专用
+- DOMAIN-SUFFIX,makersuite.google.com,🤖 AI 专用
+- DOMAIN-SUFFIX,bard.google.com,🤖 AI 专用
+- DOMAIN-SUFFIX,deepmind.google,🤖 AI 专用
+- DOMAIN-SUFFIX,notebooklm.google.com,🤖 AI 专用
+- DOMAIN-SUFFIX,x.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,grok.com,🤖 AI 专用
+- DOMAIN-SUFFIX,api.x.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,openrouter.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,mistral.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,cohere.com,🤖 AI 专用
+- DOMAIN-SUFFIX,cohere.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,groq.com,🤖 AI 专用
+- DOMAIN-SUFFIX,together.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,replicate.com,🤖 AI 专用
+- DOMAIN-SUFFIX,huggingface.co,🤖 AI 专用
+- DOMAIN-SUFFIX,poe.com,🤖 AI 专用
 - DOMAIN-KEYWORD,openai,🤖 AI 专用
 - DOMAIN-KEYWORD,chatgpt,🤖 AI 专用
+- DOMAIN-KEYWORD,anthropic,🤖 AI 专用
 - DOMAIN-SUFFIX,claudecode.com,🤖 AI 专用
-- DOMAIN-SUFFIX,deepseek.com,🤖 AI 专用
-- DOMAIN-SUFFIX,deepseek.ai,🤖 AI 专用
 - DOMAIN-SUFFIX,midjourney.com,🤖 AI 专用
 - DOMAIN-SUFFIX,perplexity.ai,🤖 AI 专用
 # ==================== YouTube/Google ====================
@@ -149,7 +205,6 @@ rules:
 - DOMAIN-SUFFIX,play-fe.googleapis.com,🌍 国外网站
 - DOMAIN-SUFFIX,play-lh.googleusercontent.com,🌍 国外网站
 - DOMAIN-SUFFIX,android.clients.google.com,🌍 国外网站
-- DOMAIN-SUFFIX,googleapis.com,🌍 国外网站
 - DOMAIN-SUFFIX,google-analytics.com,🌍 国外网站
 - DOMAIN-KEYWORD,xn--ngstr,🌍 国外网站
 - DOMAIN-KEYWORD,google,🌍 国外网站
