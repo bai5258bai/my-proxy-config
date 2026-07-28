@@ -226,8 +226,6 @@ rules:
 - DOMAIN-KEYWORD,xunlei,📥 下载服务
 - DOMAIN-KEYWORD,thunder,📥 下载服务
 - DOMAIN-KEYWORD,sandai,📥 下载服务
-# ==================== 指定 IP 直连 ====================
-- IP-CIDR,172.25.192.1/32,DIRECT
 # ==================== 国内直连 ====================
 - DOMAIN-SUFFIX,163.com,DIRECT
 - DOMAIN-SUFFIX,qq.com,DIRECT
