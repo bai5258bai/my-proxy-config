@@ -101,6 +101,7 @@ proxy-groups:
 # 规则（优化版）
 # ==================================================
 rules:
+- IP-CIDR,36.140.178.27/32,DIRECT
 # ==================== 国内 AI / 国内 AI API（直连）====================
 - DOMAIN-SUFFIX,deepseek.com,DIRECT
 - DOMAIN-SUFFIX,deepseek.ai,DIRECT
