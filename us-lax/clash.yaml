@@ -1,0 +1,246 @@
+# ==================================================
+# 基础（美国洛杉矶住宅节点独立配置）
+# ==================================================
+mixed-port: 7890
+allow-lan: true
+mode: rule
+log-level: info
+ipv6: false
+external-controller: 127.0.0.1:9090
+# ==================================================
+# TUN
+# ==================================================
+tun:
+  enable: true
+  stack: system
+  auto-route: true
+  auto-detect-interface: true
+# ==================================================
+# DNS（生产级 FakeIP）
+# ==================================================
+dns:
+  enable: true
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+  fallback:
+    - 1.1.1.1
+    - 8.8.8.8
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    ipcidr:
+      - 240.0.0.0/4
+  fake-ip-filter:
+    - '*.lan'
+    - '*.local'
+    - '*.googlevideo.com'
+    - '+.msftconnecttest.com'
+    - '+.msftncsi.com'
+    - '+.xn--ngstr-lra8j.com'
+    - '+.googleapis.com'
+    - '+.google.com'
+    - '+.android.clients.google.com'
+# ==================================================
+# 节点（VLESS + Reality + Vision，与韩国节点同协议）
+# ==================================================
+proxies:
+- name: US-LAX
+  type: vless
+  server: 64.81.25.96
+  port: 443
+  uuid: 1cbeb21f-cdcf-4d91-a97a-e8f7419d7105
+  network: tcp
+  tls: true
+  udp: true
+  flow: xtls-rprx-vision
+  servername: www.cloudflare.com
+  reality-opts:
+    public-key: SkwbBei-CHexeanm1dVnWueMmmYnXPMoY10XLhkxKRg
+    short-id: b8fe67ee219a5897
+  client-fingerprint: chrome
+# ==================================================
+# 策略组（单节点优化版）
+# ==================================================
+proxy-groups:
+- name: 🚀 节点选择
+  type: select
+  proxies:
+    - US-LAX
+    - DIRECT
+- name: 🤖 AI 专用
+  type: select
+  proxies:
+    - US-LAX
+- name: 🎬 视频媒体
+  type: select
+  proxies:
+    - US-LAX
+    - DIRECT
+- name: 🎵 Spotify
+  type: select
+  proxies:
+    - US-LAX
+    - DIRECT
+- name: 🌍 国外网站
+  type: select
+  proxies:
+    - US-LAX
+    - DIRECT
+- name: 📥 下载服务
+  type: select
+  proxies:
+    - DIRECT
+    - US-LAX
+# ==================================================
+# 规则（优化版）
+# ==================================================
+rules:
+- IP-CIDR,36.140.178.27/32,DIRECT
+# ==================== 国内 AI / 国内 AI API（直连）====================
+- DOMAIN-SUFFIX,deepseek.com,DIRECT
+- DOMAIN-SUFFIX,deepseek.ai,DIRECT
+- DOMAIN-SUFFIX,kimi.com,DIRECT
+- DOMAIN-SUFFIX,moonshot.cn,DIRECT
+- DOMAIN-SUFFIX,qwen.ai,DIRECT
+- DOMAIN-SUFFIX,qwenlm.ai,DIRECT
+- DOMAIN-SUFFIX,tongyi.com,DIRECT
+- DOMAIN-SUFFIX,dashscope.aliyuncs.com,DIRECT
+- DOMAIN-SUFFIX,doubao.com,DIRECT
+- DOMAIN-SUFFIX,volces.com,DIRECT
+- DOMAIN-SUFFIX,volcengine.com,DIRECT
+- DOMAIN-SUFFIX,volcengineapi.com,DIRECT
+- DOMAIN-SUFFIX,bigmodel.cn,DIRECT
+- DOMAIN-SUFFIX,zhipuai.cn,DIRECT
+- DOMAIN-SUFFIX,chatglm.cn,DIRECT
+- DOMAIN-SUFFIX,minimax.chat,DIRECT
+- DOMAIN-SUFFIX,minimaxi.com,DIRECT
+- DOMAIN-SUFFIX,baichuan-ai.com,DIRECT
+- DOMAIN-SUFFIX,modelscope.cn,DIRECT
+- DOMAIN-SUFFIX,siliconflow.cn,DIRECT
+- DOMAIN-SUFFIX,stepfun.com,DIRECT
+- DOMAIN-SUFFIX,01.ai,DIRECT
+- DOMAIN-SUFFIX,hunyuan.tencent.com,DIRECT
+- DOMAIN-SUFFIX,tencentcloudapi.com,DIRECT
+- DOMAIN-SUFFIX,yiyan.baidu.com,DIRECT
+- DOMAIN-SUFFIX,wenxin.baidu.com,DIRECT
+- DOMAIN-SUFFIX,qianfan.cloud.baidu.com,DIRECT
+- DOMAIN-SUFFIX,xfyun.cn,DIRECT
+- DOMAIN-SUFFIX,sparkdesk.cn,DIRECT
+# ==================== 国外 AI 专用（防封优化，强制代理）====================
+- DOMAIN-SUFFIX,openai.com,🤖 AI 专用
+- DOMAIN-SUFFIX,chatgpt.com,🤖 AI 专用
+- DOMAIN-SUFFIX,oaistatic.com,🤖 AI 专用
+- DOMAIN-SUFFIX,oaiusercontent.com,🤖 AI 专用
+- DOMAIN-SUFFIX,claude.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,anthropic.com,🤖 AI 专用
+- DOMAIN-SUFFIX,console.anthropic.com,🤖 AI 专用
+- DOMAIN-SUFFIX,gemini.google.com,🤖 AI 专用
+- DOMAIN-SUFFIX,ai.google.dev,🤖 AI 专用
+- DOMAIN-SUFFIX,aistudio.google.com,🤖 AI 专用
+- DOMAIN-SUFFIX,generativelanguage.googleapis.com,🤖 AI 专用
+- DOMAIN-SUFFIX,makersuite.google.com,🤖 AI 专用
+- DOMAIN-SUFFIX,bard.google.com,🤖 AI 专用
+- DOMAIN-SUFFIX,deepmind.google,🤖 AI 专用
+- DOMAIN-SUFFIX,notebooklm.google.com,🤖 AI 专用
+- DOMAIN-SUFFIX,x.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,grok.com,🤖 AI 专用
+- DOMAIN-SUFFIX,api.x.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,openrouter.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,mistral.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,cohere.com,🤖 AI 专用
+- DOMAIN-SUFFIX,cohere.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,groq.com,🤖 AI 专用
+- DOMAIN-SUFFIX,together.ai,🤖 AI 专用
+- DOMAIN-SUFFIX,replicate.com,🤖 AI 专用
+- DOMAIN-SUFFIX,huggingface.co,🤖 AI 专用
+- DOMAIN-SUFFIX,poe.com,🤖 AI 专用
+- DOMAIN-KEYWORD,openai,🤖 AI 专用
+- DOMAIN-KEYWORD,chatgpt,🤖 AI 专用
+- DOMAIN-KEYWORD,anthropic,🤖 AI 专用
+- DOMAIN-SUFFIX,claudecode.com,🤖 AI 专用
+- DOMAIN-SUFFIX,midjourney.com,🤖 AI 专用
+- DOMAIN-SUFFIX,perplexity.ai,🤖 AI 专用
+# ==================== YouTube/Google ====================
+- DOMAIN-SUFFIX,youtube.com,🎬 视频媒体
+- DOMAIN-SUFFIX,youtube-nocookie.com,🎬 视频媒体
+- DOMAIN-SUFFIX,googlevideo.com,🎬 视频媒体
+- DOMAIN-SUFFIX,ytimg.com,🎬 视频媒体
+- DOMAIN-SUFFIX,yt3.ggpht.com,🎬 视频媒体
+- DOMAIN-KEYWORD,youtube,🎬 视频媒体
+- DOMAIN-SUFFIX,google.com,🌍 国外网站
+- DOMAIN-SUFFIX,gstatic.com,🌍 国外网站
+- DOMAIN-SUFFIX,googleapis.com,🌍 国外网站
+- DOMAIN-SUFFIX,googleusercontent.com,🌍 国外网站
+# ==================== 社交平台 ====================
+- DOMAIN-SUFFIX,telegram.org,🌍 国外网站
+- DOMAIN-SUFFIX,telegram.me,🌍 国外网站
+- DOMAIN-SUFFIX,t.me,🌍 国外网站
+- DOMAIN-SUFFIX,x.com,🌍 国外网站
+- DOMAIN-SUFFIX,twitter.com,🌍 国外网站
+- DOMAIN-SUFFIX,twimg.com,🌍 国外网站
+- DOMAIN-SUFFIX,discord.com,🌍 国外网站
+- DOMAIN-SUFFIX,discord.gg,🌍 国外网站
+# ==================== Steam 平台（下载直连）====================
+- DOMAIN-SUFFIX,steampowered.com,🌍 国外网站
+- DOMAIN-SUFFIX,steamstatic.com,🌍 国外网站
+- DOMAIN-SUFFIX,steamcommunity.com,🌍 国外网站
+- DOMAIN-SUFFIX,steamgames.com,🌍 国外网站
+- DOMAIN-SUFFIX,steamcdn-a.akamaihd.net,DIRECT
+- DOMAIN-SUFFIX,steamcontent.com,DIRECT
+- DOMAIN-SUFFIX,steamstore-a.akamaihd.net,DIRECT
+- DOMAIN-KEYWORD,steamcdn,DIRECT
+- DOMAIN-KEYWORD,steamcontent,DIRECT
+# ==================== Google Play & 支付修复（核心修复） ====================
+# xn--ngstr-lra8j.com 是 Google Play 支付网关域名（dl.google.com 的国际化编码）
+# 其 CDN 子域名（如 rr1---sn-*.xn--ngstr-lra8j.com）DNS 常被污染解析到国内 IP，
+# 被 GEOIP,CN,DIRECT 提前捕获导致直连超时，必须用 DOMAIN-SUFFIX 在 GeoIP 之前精确匹配
+- DOMAIN-SUFFIX,xn--ngstr-lra8j.com,🌍 国外网站
+- DOMAIN-SUFFIX,play.google.com,🌍 国外网站
+- DOMAIN-SUFFIX,play.googleapis.com,🌍 国外网站
+- DOMAIN-SUFFIX,play-fe.googleapis.com,🌍 国外网站
+- DOMAIN-SUFFIX,play-lh.googleusercontent.com,🌍 国外网站
+- DOMAIN-SUFFIX,android.clients.google.com,🌍 国外网站
+- DOMAIN-SUFFIX,google-analytics.com,🌍 国外网站
+- DOMAIN-KEYWORD,xn--ngstr,🌍 国外网站
+- DOMAIN-KEYWORD,google,🌍 国外网站
+- DOMAIN-KEYWORD,1e100,🌍 国外网站
+# ==================== Spotify 规则 ====================
+- DOMAIN-SUFFIX,spotify.com,🎵 Spotify
+- DOMAIN-SUFFIX,scdn.co,🎵 Spotify
+- DOMAIN-SUFFIX,spoti.fi,🎵 Spotify
+- DOMAIN-KEYWORD,spotify,🎵 Spotify
+# ==================== 迅雷下载（直连优先）====================
+- DOMAIN-SUFFIX,cdn.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,sandai.net,📥 下载服务
+- DOMAIN-SUFFIX,xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,thunderurl.com,📥 下载服务
+- DOMAIN-SUFFIX,dl.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,kuai.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,static.xunlei.com,📥 下载服务
+- DOMAIN-SUFFIX,get.xunlei.com,📥 下载服务
+- DOMAIN-KEYWORD,xunlei,📥 下载服务
+- DOMAIN-KEYWORD,thunder,📥 下载服务
+- DOMAIN-KEYWORD,sandai,📥 下载服务
+# ==================== 国内直连 ====================
+- DOMAIN-SUFFIX,163.com,DIRECT
+- DOMAIN-SUFFIX,qq.com,DIRECT
+- DOMAIN-SUFFIX,tencent.com,DIRECT
+- DOMAIN-SUFFIX,weixin.com,DIRECT
+- DOMAIN-SUFFIX,alipay.com,DIRECT
+- DOMAIN-SUFFIX,taobao.com,DIRECT
+- DOMAIN-SUFFIX,baidu.com,DIRECT
+- DOMAIN-SUFFIX,jd.com,DIRECT
+- DOMAIN-SUFFIX,bilibili.com,DIRECT
+- DOMAIN-SUFFIX,iqiyi.com,DIRECT
+- DOMAIN-SUFFIX,youku.com,DIRECT
+- DOMAIN-SUFFIX,zhihu.com,DIRECT
+- DOMAIN-SUFFIX,douyin.com,DIRECT
+- GEOIP,CN,DIRECT
+# ==================== 兜底规则 ====================
+- MATCH,🚀 节点选择
